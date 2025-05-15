@@ -1,0 +1,6 @@
+{
+  "css.validate": false,
+  "scss.validate": false,
+  "tailwindCSS.lint.invalidConfigPath": "ignore",
+  "tailwindCSS.lint.invalidVariant": "ignore"
+}

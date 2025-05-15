@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import newSushiImage from "../assets/newsushi.png";
+import sushiImage from "../assets/sushi.png";
+import dubaiImage from "../assets/dubai.png";
 
 const MediaKit = () => {
   const [activePage, setActivePage] = useState("insights");
@@ -80,7 +83,7 @@ const MediaKit = () => {
   // Package card component
   const PackageCard = ({ title, price, features, popular = false }) => (
     <div className="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex-1 min-w-[200px] max-w-[400px]">
-      <div className="h-28 bg-gray-200 flex items-flex-start justify-center">
+      <div className="h-28 bg-pink-100 flex items-flex-start justify-center">
         <span className="text-xl font-bold mt-10 text-pink-500">{title}</span>
       </div>
       {popular && (
@@ -112,10 +115,20 @@ const MediaKit = () => {
   );
 
   // Content highlight card
-  const ContentCard = ({ title, views, engagement }) => (
-    <div className="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex-1 min-w-[250px] max-w-[400px]">
-      <div className="h-48 bg-gray-200 flex items-center justify-center">
-        <span className="text-xl font-bold text-gray-400">{title}</span>
+
+  const ContentCard = ({ href, title, image, views, engagement }) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex-shrink-0 w-[300px] block"
+    >
+      <div className="h-48 overflow-hidden">
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-full object-cover object-bottom"
+        />
       </div>
       <div className="p-4">
         <div className="flex justify-between mb-1">
@@ -129,10 +142,9 @@ const MediaKit = () => {
           </span>
         </div>
       </div>
-    </div>
+    </a>
   );
-  // Helper function to render the correct timeframe content
-  // Helper function to render the correct timeframe content
+
   const renderTimeframeContent = () => {
     switch (activeTimeframe) {
       case "year":
@@ -397,13 +409,23 @@ const MediaKit = () => {
 
               {/* Ändra denna div från grid till flex för horisontell layout */}
               <div className="flex flex-row gap-6 mb-8 overflow-x-auto">
-                <ContentCard title="Sushi" views="5.7M" engagement="8.2%" />
                 <ContentCard
+                  href="https://www.tiktok.com/@mmmsanne/video/7351855378608557345?lang=sv-SE"
+                  image={sushiImage}
+                  title="Sushi"
+                  views="5.7M"
+                  engagement="8.2%"
+                />
+                <ContentCard
+                  href="https://www.tiktok.com/@mmmsanne/video/7227056977468214555?lang=sv-SE"
+                  image={newSushiImage}
                   title="New Sushi Place"
                   views="5.9M"
                   engagement="7.8%"
                 />
                 <ContentCard
+                  href="https://www.tiktok.com/@mmmsanne/video/7501945663526145302?lang=sv-SE"
+                  image={dubaiImage}
                   title="Dubai Chocolate from Normal"
                   views="78.4K"
                   engagement="6.9%"
