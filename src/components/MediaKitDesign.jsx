@@ -2,825 +2,409 @@ import React, { useState } from "react";
 
 const MediaKit = () => {
   const [activePage, setActivePage] = useState("insights");
+  const [activeTimeframe, setActiveTimeframe] = useState("year");
 
-  // Inline styles as a fallback
-  const styles = {
-    // Ändra dessa egenskaper i ditt styles-objekt
-    container: {
-      minHeight: "100vh",
-      background: "linear-gradient(to bottom right, #fdf2f8, #ede9fe)",
-      padding: "1.5rem",
-      fontFamily: "sans-serif",
-      boxSizing: "border-box", // Lägg till detta
-      display: "flex", // Behåll detta
-      justifyContent: "center", // Behåll detta
-      alignItems: "flex-start", // Ändra till flex-start istället för center
-    },
+  // Navigation button component for reuse
+  const NavButton = ({ label, pageName, current }) => (
+    <button
+      onClick={() => setActivePage(pageName)}
+      className={`px-3 py-2 text-sm font-medium rounded-md transition ${
+        current === pageName
+          ? "bg-purple-500 text-white"
+          : "text-gray-700 hover:bg-gray-100"
+      }`}
+    >
+      {label}
+    </button>
+  );
 
-    content: {
-      maxWidth: "64rem",
-      width: "100%", // Lägg till detta
-      margin: "0 auto",
-      background: "white",
-      borderRadius: "0.75rem",
-      boxShadow:
-        "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-      overflow: "hidden",
-    },
-    header: {
-      background: "linear-gradient(to right, #8b5cf6, #ec4899)",
-      padding: "2rem",
-      color: "white",
-      textAlign: "center",
-    },
-    title: {
-      fontSize: "2.25rem",
-      fontWeight: "bold",
-      marginBottom: "0.5rem",
-    },
-    username: {
-      fontSize: "1.25rem",
-      fontWeight: "500",
-      marginBottom: "0.75rem",
-    },
-    description: {
-      fontSize: "1.125rem",
-      marginBottom: "1rem",
-    },
-    location: {
-      fontSize: "1rem",
-      fontStyle: "italic",
-    },
-    tags: {
-      display: "flex",
-      flexWrap: "wrap",
-      justifyContent: "center",
-      gap: "0.75rem",
-      marginTop: "1.5rem",
-    },
-    tag: {
-      padding: "0.25rem 1rem",
-      background: "rgba(255, 255, 255, 0.3)",
-      borderRadius: "9999px",
-      fontSize: "0.875rem",
-      fontWeight: "500",
-    },
-    nav: {
-      background: "#f3f4f6",
-      padding: "0.75rem 1.5rem",
-    },
-    navInner: {
-      display: "flex",
-      justifyContent: "center",
-      gap: "1.5rem",
-    },
-    navButton: {
-      padding: "0.5rem 0.75rem",
-      fontSize: "0.875rem",
-      fontWeight: "500",
-      borderRadius: "0.375rem",
-      cursor: "pointer",
-      border: "none",
-    },
-    activeNavButton: {
-      background: "#8b5cf6",
-      color: "white",
-    },
-    inactiveNavButton: {
-      color: "#374151",
-      background: "transparent",
-    },
-    contentSection: {
-      padding: "1.5rem",
-    },
-    sectionTitle: {
-      fontSize: "1.5rem",
-      fontWeight: "bold",
-      color: "#1f2937",
-      marginBottom: "1.5rem",
-    },
-    statsGrid: {
-      display: "grid",
-      gridTemplateColumns: "repeat(3, 1fr)",
-      gap: "1.5rem",
-      marginBottom: "2rem",
-    },
-    statCard: {
-      background: "#f9fafb",
-      borderRadius: "0.5rem",
-      padding: "1.5rem",
-      textAlign: "center",
-    },
-    statLabel: {
-      fontSize: "0.875rem",
-      color: "#6b7280",
-      textTransform: "uppercase",
-      marginBottom: "0.25rem",
-    },
-    statValue: {
-      fontSize: "1.875rem",
-      fontWeight: "bold",
-      color: "#1f2937",
-    },
-    footer: {
-      background: "#f9fafb",
-      padding: "1rem 1.5rem",
-      textAlign: "center",
-      color: "#4b5563",
-      fontSize: "0.875rem",
-    },
+  // Timeframe button component
+  const TimeframeButton = ({ label, period, current }) => (
+    <button
+      onClick={() => setActiveTimeframe(period)}
+      className={`px-3 py-1 text-xs font-medium rounded-md transition ${
+        current === period
+          ? "bg-purple-100 text-purple-500 border border-purple-500"
+          : "text-gray-600 border border-gray-300 hover:bg-gray-50"
+      }`}
+    >
+      {label}
+    </button>
+  );
+
+  // Stat card component for audience insights
+  const StatCard = ({ label, value }) => (
+    <div className="bg-gray-50 rounded-lg p-5 text-center shadow-sm hover:shadow-md transition flex-1 min-w-[150px]">
+      <p className="text-4xl font-bold text-gray-800">{value}</p>
+      <p className="text-sm text-gray-500 uppercase mt-1">{label}</p>
+    </div>
+  );
+  // Performance indicator component
+  const PerformanceIndicator = ({ label, value, percentage }) => (
+    <div className="flex justify-between items-center mb-2">
+      <span className="text-sm font-medium text-gray-600">{label}</span>
+      <div className="flex items-center">
+        <span className="text-sm font-medium text-gray-800">{value}</span>
+        {percentage && (
+          <span className="ml-2 text-xs font-medium text-green-600">
+            {percentage}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+
+  // Demographic bar component
+  const DemographicBar = ({ label, percentage, color = "bg-purple-500" }) => (
+    <div className="mb-3">
+      <div className="flex justify-between mb-1">
+        <span className="text-sm font-medium text-gray-600">{label}</span>
+        <span className="text-sm font-medium text-gray-800">{percentage}%</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2">
+        <div
+          className={`${color} h-2 rounded-full`}
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+    </div>
+  );
+
+  // Package card component
+  const PackageCard = ({ title, price, features, popular = false }) => (
+    <div
+      className={`border rounded-lg overflow-hidden relative ${
+        popular
+          ? "border-2 border-purple-500 shadow-md"
+          : "border-gray-200 hover:border-gray-300"
+      }`}
+    >
+      {popular && (
+        <div className="absolute top-0 right-0">
+          <div className="bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+            POPULAR
+          </div>
+        </div>
+      )}
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-gray-800 mb-1">{title}</h3>
+        <p className="text-2xl font-bold text-purple-500 mb-4">{price}</p>
+        <ul className="space-y-2">
+          {features.map((feature, idx) => (
+            <li key={idx} className="flex items-start">
+              <span className="text-green-500 mr-2">✓</span>
+              <span className="text-gray-600">{feature}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+
+  // Content highlight card
+  const ContentCard = ({ title, views, engagement }) => (
+    <div className="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex-1 min-w-[250px] max-w-[400px]">
+      <div className="h-48 bg-gray-200 flex items-center justify-center">
+        <span className="text-xl font-bold text-gray-400">{title}</span>
+      </div>
+      <div className="p-4">
+        <div className="flex justify-between mb-1">
+          <span className="text-sm font-medium text-gray-500">Views</span>
+          <span className="text-sm font-medium text-gray-800">{views}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-sm font-medium text-gray-500">Engagement</span>
+          <span className="text-sm font-medium text-gray-800">
+            {engagement}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+  // Helper function to render the correct timeframe content
+  // Helper function to render the correct timeframe content
+  const renderTimeframeContent = () => {
+    switch (activeTimeframe) {
+      case "year":
+        return (
+          <>
+            {/* Ändra från grid till flex för horisontell layout */}
+            <div className="flex flex-row gap-4 mb-8 overflow-x-auto pb-4">
+              <StatCard label="Total Followers" value="37.2K" />
+              <StatCard label="Total Likes" value="1.6M" />
+              <StatCard label="Total Views" value="15M" />
+              <StatCard label="Top Video Views" value="5.9M" />
+              <StatCard label="FYP Discovery" value="63.4%" />
+              <StatCard label="Weekly Views" value="289K" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div
+                className="bg-white p-6 rounded-lg shadow-sm"
+                style={{ backgroundColor: "white" }}
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Content Performance
+                </h3>
+                <PerformanceIndicator label="Engagement" value="82%" />
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Age Demographics
+                </h3>
+                <DemographicBar label="18-24" percentage={45} />
+                <DemographicBar label="25-34" percentage={35} />
+                <DemographicBar label="35-44" percentage={15} />
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Gender Demographics
+              </h3>
+              <div className="flex items-center">
+                <div className="w-3/4 bg-gray-200 rounded-full h-4 mr-4">
+                  <div className="bg-pink-400 h-4 rounded-l-full w-3/4"></div>
+                </div>
+                <div className="text-sm">
+                  <span className="font-semibold">75% F</span> / 25% M
+                </div>
+              </div>
+            </div>
+          </>
+        );
+
+      case "sixty":
+        return (
+          <>
+            {/* Ändra från grid till flex för horisontell layout */}
+            <div className="flex flex-row gap-4 mb-8 overflow-x-auto pb-4">
+              <StatCard label="Followers" value="37.2K" />
+              <StatCard label="Likes (Period)" value="51K" />
+              <StatCard label="Video Views" value="1.7M" />
+              <StatCard label="Peak Daily Views" value="112K+" />
+              <StatCard label="FYP Discovery" value="63.4%" />
+              <StatCard label="Comments" value="1.7K" />
+            </div>
+
+            {/* Resten av innehållet förblir detsamma */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              {/* ... */}
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
+              {/* ... */}
+            </div>
+          </>
+        );
+
+      case "month":
+        return (
+          <>
+            {/* Ändra från grid till flex för horisontell layout */}
+            <div className="flex flex-row gap-4 mb-8 overflow-x-auto pb-4">
+              <StatCard label="Followers" value="37.2K" />
+              <StatCard label="Likes (Period)" value="23K" />
+              <StatCard label="Video Views" value="800K" />
+              <StatCard label="Peak Daily Views" value="112K+" />
+              <StatCard label="FYP Discovery" value="63.4%" />
+              <StatCard label="Comments" value="778" />
+            </div>
+
+            {/* Resten av innehållet förblir detsamma */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              {/* ... */}
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
+              {/* ... */}
+            </div>
+          </>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.content}>
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 p-6 flex justify-center items-start">
+      <div className="max-w-5xl w-full bg-white rounded-xl shadow-lg overflow-hidden">
         {/* Header Section */}
-        <div style={styles.header}>
-          <h1 style={styles.title}>Media Kit - Sanne Delin</h1>
-          <p style={styles.username}>@mmmsanne</p>
-          <p style={styles.description}>Food & ASMR Content Creator</p>
-          <p style={styles.location}>Sweden 🇸🇪</p>
+        <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-8 text-center text-white">
+          <h1 className="text-3xl font-bold mb-2">Media Kit - Sanne Delin</h1>
+          <p className="text-xl mb-3">@mmmsanne</p>
+          <p className="text-lg mb-2">Food & ASMR Content Creator</p>
+          <p className="text-base italic mb-4">Sweden 🇸🇪</p>
 
-          <div style={styles.tags}>
-            <span style={styles.tag}>Food</span>
-            <span style={styles.tag}>ASMR</span>
-            <span style={styles.tag}>Lifestyle</span>
-            <span style={styles.tag}>Programming</span>
+          <div className="flex flex-wrap justify-center gap-3 mt-4">
+            <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+              Food
+            </span>
+            <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+              ASMR
+            </span>
+            <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+              Lifestyle
+            </span>
+            <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+              Programming
+            </span>
           </div>
         </div>
 
         {/* Navigation */}
-        <div style={styles.nav}>
-          <nav style={styles.navInner}>
-            <button
-              onClick={() => setActivePage("insights")}
-              style={{
-                ...styles.navButton,
-                ...(activePage === "insights"
-                  ? styles.activeNavButton
-                  : styles.inactiveNavButton),
-              }}
-            >
-              Audience Insights
-            </button>
-            <button
-              onClick={() => setActivePage("rates")}
-              style={{
-                ...styles.navButton,
-                ...(activePage === "rates"
-                  ? styles.activeNavButton
-                  : styles.inactiveNavButton),
-              }}
-            >
-              Collaboration Rates
-            </button>
-            <button
-              onClick={() => setActivePage("successes")}
-              style={{
-                ...styles.navButton,
-                ...(activePage === "successes"
-                  ? styles.activeNavButton
-                  : styles.inactiveNavButton),
-              }}
-            >
-              Past Successes
-            </button>
+        <div className="bg-gray-100 px-6 py-3">
+          <nav className="flex justify-center gap-4">
+            <NavButton
+              label="Audience Insights"
+              pageName="insights"
+              current={activePage}
+            />
+            <NavButton
+              label="Collaboration Rates"
+              pageName="rates"
+              current={activePage}
+            />
+            <NavButton
+              label="Past Successes"
+              pageName="successes"
+              current={activePage}
+            />
           </nav>
         </div>
 
         {/* Content Section */}
-        <div style={styles.contentSection}>
+        <div className="p-6">
           {/* Audience Insights Page */}
           {activePage === "insights" && (
             <div>
-              <h2 style={styles.sectionTitle}>Audience Insights</h2>
-
-              {/* Stats Grid - simplified for inline styles */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                  gap: "1rem",
-                  marginBottom: "2rem",
-                }}
-              >
-                <div style={styles.statCard}>
-                  <p style={styles.statLabel}>Followers</p>
-                  <p style={styles.statValue}>37.2K</p>
-                </div>
-                <div style={styles.statCard}>
-                  <p style={styles.statLabel}>Total Likes</p>
-                  <p style={styles.statValue}>1.6M</p>
-                </div>
-                <div style={styles.statCard}>
-                  <p style={styles.statLabel}>Total Views</p>
-                  <p style={styles.statValue}>15M</p>
-                </div>
-                <div style={styles.statCard}>
-                  <p style={styles.statLabel}>Top Video Views</p>
-                  <p style={styles.statValue}>5.9M</p>
-                </div>
-                <div style={styles.statCard}>
-                  <p style={styles.statLabel}>FYP Discovery</p>
-                  <p style={styles.statValue}>63.4%</p>
-                </div>
-                <div style={styles.statCard}>
-                  <p style={styles.statLabel}>Weekly Views</p>
-                  <p style={styles.statValue}>289K</p>
+              <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">
+                  Audience Insights
+                </h2>
+                <div className="flex space-x-3">
+                  <TimeframeButton
+                    label="368 dagar"
+                    period="year"
+                    current={activeTimeframe}
+                  />
+                  <TimeframeButton
+                    label="60 dagar"
+                    period="sixty"
+                    current={activeTimeframe}
+                  />
+                  <TimeframeButton
+                    label="28 dagar"
+                    period="month"
+                    current={activeTimeframe}
+                  />
                 </div>
               </div>
 
-              {/* More content here */}
+              <div className="mb-6">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                  {activeTimeframe === "year" &&
+                    "Audience & Performance (last 368 days)"}
+                  {activeTimeframe === "sixty" &&
+                    "Audience & Performance (last 60 days)"}
+                  {activeTimeframe === "month" &&
+                    "Audience & Performance (last 28 days)"}
+                </h3>
+                {renderTimeframeContent()}
+              </div>
             </div>
           )}
 
           {/* Collaboration Rates Page */}
           {activePage === "rates" && (
             <div>
-              <h2 style={styles.sectionTitle}>Collaboration Packages</h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                Collaboration Packages
+              </h2>
 
-              {/* Packages - simplified for inline styles */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-                  gap: "1.5rem",
-                  marginBottom: "2rem",
-                }}
-              >
-                {/* Standard Package */}
-                <div
-                  style={{
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "0.5rem",
-                    overflow: "hidden",
-                  }}
-                >
-                  <div style={{ padding: "1.5rem" }}>
-                    <h3
-                      style={{
-                        fontSize: "1.25rem",
-                        fontWeight: "bold",
-                        color: "#1f2937",
-                        marginBottom: "0.5rem",
-                      }}
-                    >
-                      Standard
-                    </h3>
-                    <p
-                      style={{
-                        fontSize: "1.5rem",
-                        fontWeight: "bold",
-                        color: "#8b5cf6",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      6,500 SEK
-                    </p>
-                    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>1 TikTok Video</span>
-                      </li>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          Creative Direction
-                        </span>
-                      </li>
-                      <li style={{ display: "flex", alignItems: "flex-start" }}>
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          Performance Report
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <PackageCard
+                  title="Standard"
+                  price="6,500 SEK"
+                  features={[
+                    "1 TikTok Video",
+                    "Creative Direction",
+                    "Performance Report",
+                  ]}
+                />
+                <PackageCard
+                  title="Premium"
+                  price="8,000 SEK"
+                  features={[
+                    "1 TikTok Video",
+                    "Creative Direction",
+                    "Performance Report",
+                    "Spark Ads Usage",
+                    "Exclusivity (7 days)",
+                  ]}
+                  popular={true}
+                />
+                <PackageCard
+                  title="Series"
+                  price="21,000 SEK"
+                  features={[
+                    "3 TikTok Videos",
+                    "Creative Direction",
+                    "Performance Report",
+                    "Spark Ads Usage",
+                    "Exclusivity (14 days)",
+                    "Bonus: Story Content",
+                  ]}
+                />
+              </div>
 
-                {/* Premium Package */}
-                <div
-                  style={{
-                    border: "2px solid #8b5cf6",
-                    borderRadius: "0.5rem",
-                    overflow: "hidden",
-                    position: "relative",
-                  }}
-                >
-                  <div style={{ padding: "1.5rem" }}>
-                    <h3
-                      style={{
-                        fontSize: "1.25rem",
-                        fontWeight: "bold",
-                        color: "#1f2937",
-                        marginBottom: "0.5rem",
-                      }}
-                    >
-                      Premium
-                    </h3>
-                    <p
-                      style={{
-                        fontSize: "1.5rem",
-                        fontWeight: "bold",
-                        color: "#8b5cf6",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      8,000 SEK
-                    </p>
-                    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>1 TikTok Video</span>
-                      </li>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          Creative Direction
-                        </span>
-                      </li>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          Performance Report
-                        </span>
-                      </li>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          Spark Ads Usage
-                        </span>
-                      </li>
-                      <li style={{ display: "flex", alignItems: "flex-start" }}>
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          Exclusivity (7 days)
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Series Package */}
-                <div
-                  style={{
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "0.5rem",
-                    overflow: "hidden",
-                  }}
-                >
-                  <div style={{ padding: "1.5rem" }}>
-                    <h3
-                      style={{
-                        fontSize: "1.25rem",
-                        fontWeight: "bold",
-                        color: "#1f2937",
-                        marginBottom: "0.5rem",
-                      }}
-                    >
-                      Series
-                    </h3>
-                    <p
-                      style={{
-                        fontSize: "1.5rem",
-                        fontWeight: "bold",
-                        color: "#8b5cf6",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      21,000 SEK
-                    </p>
-                    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          3 TikTok Videos
-                        </span>
-                      </li>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          Creative Direction
-                        </span>
-                      </li>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          Performance Report
-                        </span>
-                      </li>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          Spark Ads Usage
-                        </span>
-                      </li>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          Exclusivity (14 days)
-                        </span>
-                      </li>
-                      <li style={{ display: "flex", alignItems: "flex-start" }}>
-                        <span
-                          style={{ color: "#10b981", marginRight: "0.5rem" }}
-                        >
-                          ✓
-                        </span>
-                        <span style={{ color: "#4b5563" }}>
-                          Bonus: Story Content
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+              <div className="bg-gray-50 rounded-lg p-6 mb-6">
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                  Additional Services
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  For additional services such as Extended Usage Rights,
+                  Whitelisting, Script Revisions, or Rush Fee, please get in
+                  touch so we can establish a mutually agreeable price and
+                  arrangement.
+                </p>
+                <p className="italic text-gray-600">
+                  Contact me at: mmmsanne@gmail.com
+                </p>
               </div>
             </div>
           )}
 
           {/* Past Successes Page */}
+          {/* Past Successes Page */}
           {activePage === "successes" && (
             <div>
-              <h2 style={styles.sectionTitle}>Content Highlights</h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                Content Highlights
+              </h2>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-                  gap: "1.5rem",
-                  marginBottom: "2rem",
-                }}
-              >
-                {/* Success 1 */}
-                <div
-                  style={{
-                    background: "#f9fafb",
-                    borderRadius: "0.5rem",
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
-                      height: "12rem",
-                      background: "#e5e7eb",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "1.5rem",
-                        fontWeight: "bold",
-                        color: "#9ca3af",
-                      }}
-                    >
-                      Sushi
-                    </span>
-                  </div>
-                  <div style={{ padding: "1rem" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "0.25rem",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#6b7280",
-                        }}
-                      >
-                        Views
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#111827",
-                        }}
-                      >
-                        5.7M
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#6b7280",
-                        }}
-                      >
-                        Engagement
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#111827",
-                        }}
-                      >
-                        8.2%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Success 2 */}
-                <div
-                  style={{
-                    background: "#f9fafb",
-                    borderRadius: "0.5rem",
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
-                      height: "12rem",
-                      background: "#e5e7eb",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "1.5rem",
-                        fontWeight: "bold",
-                        color: "#9ca3af",
-                      }}
-                    >
-                      New Sushi Place
-                    </span>
-                  </div>
-                  <div style={{ padding: "1rem" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "0.25rem",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#6b7280",
-                        }}
-                      >
-                        Views
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#111827",
-                        }}
-                      >
-                        5.9M
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#6b7280",
-                        }}
-                      >
-                        Engagement
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#111827",
-                        }}
-                      >
-                        7.8%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Success 3 */}
-                <div
-                  style={{
-                    background: "#f9fafb",
-                    borderRadius: "0.5rem",
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
-                      height: "12rem",
-                      background: "#e5e7eb",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "1.5rem",
-                        fontWeight: "bold",
-                        color: "#9ca3af",
-                      }}
-                    >
-                      Dubai Chocolate
-                    </span>
-                  </div>
-                  <div style={{ padding: "1rem" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "0.25rem",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#6b7280",
-                        }}
-                      >
-                        Views
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#111827",
-                        }}
-                      >
-                        78.4K
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#6b7280",
-                        }}
-                      >
-                        Engagement
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#111827",
-                        }}
-                      >
-                        6.9%
-                      </span>
-                    </div>
-                  </div>
-                </div>
+              {/* Ändra denna div från grid till flex för horisontell layout */}
+              <div className="flex flex-row gap-6 mb-8 overflow-x-auto">
+                <ContentCard title="Sushi" views="5.7M" engagement="8.2%" />
+                <ContentCard
+                  title="New Sushi Place"
+                  views="5.9M"
+                  engagement="7.8%"
+                />
+                <ContentCard
+                  title="Dubai Chocolate from Normal"
+                  views="78.4K"
+                  engagement="6.9%"
+                />
               </div>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div style={styles.footer}>
+        <div className="bg-gray-50 p-4 text-center text-gray-600 text-sm">
           <p>
             This media kit was created to showcase my audience insights and
             collaboration options. Feel free to reach out to discuss potential

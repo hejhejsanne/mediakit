@@ -1,12 +1,7 @@
-import React from "react";
-import MediaKit from "./components/MediaKitDesign.jsx";
+import MediaKit from "./components/MediaKitDesign";
 
 function App() {
-  return (
-    <div className="App">
-      <MediaKit />
-    </div>
-  );
+  return <MediaKit />;
 }
 
 export default App;
