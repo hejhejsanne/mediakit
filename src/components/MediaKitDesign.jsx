@@ -41,19 +41,26 @@ const MediaKit = () => {
   );
   // Performance indicator component
   const PerformanceIndicator = ({ label, value, percentage }) => (
-    <div className="flex justify-between items-center mb-2">
-      <span className="text-sm font-medium text-gray-600">{label}</span>
-      <div className="flex items-center">
-        <span className="text-sm font-medium text-gray-800">{value}</span>
-        {percentage && (
-          <span className="ml-2 text-xs font-medium text-green-600">
-            {percentage}
-          </span>
-        )}
+    <div>
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-sm font-medium text-gray-600">{label}</span>
+        <div className="flex items-center">
+          <span className="text-sm font-medium text-gray-800">{value}</span>
+          {percentage && (
+            <span className="ml-2 text-xs font-medium text-green-600">
+              {percentage}
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2">
+        <div
+          className="bg-purple-500 h-2 rounded-full"
+          style={{ width: `${parseFloat(value)}%` }}
+        ></div>
       </div>
     </div>
   );
-
   // Demographic bar component
   const DemographicBar = ({ label, percentage, color = "bg-purple-500" }) => (
     <div className="mb-3">
@@ -72,13 +79,10 @@ const MediaKit = () => {
 
   // Package card component
   const PackageCard = ({ title, price, features, popular = false }) => (
-    <div
-      className={`border rounded-lg overflow-hidden relative ${
-        popular
-          ? "border-2 border-purple-500 shadow-md"
-          : "border-gray-200 hover:border-gray-300"
-      }`}
-    >
+    <div className="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex-1 min-w-[200px] max-w-[400px]">
+      <div className="h-28 bg-gray-200 flex items-flex-start justify-center">
+        <span className="text-xl font-bold mt-10 text-pink-500">{title}</span>
+      </div>
       {popular && (
         <div className="absolute top-0 right-0">
           <div className="bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
@@ -86,17 +90,23 @@ const MediaKit = () => {
           </div>
         </div>
       )}
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-1">{title}</h3>
-        <p className="text-2xl font-bold text-purple-500 mb-4">{price}</p>
-        <ul className="space-y-2">
+      <div className="p-4">
+        <div className="flex justify-between mb-1">
+          <span className="text-sm font-medium text-gray-500">Price</span>
+          <span className="text-sm font-medium text-purple-500 font-bold">
+            {price}
+          </span>
+        </div>
+        <div className="space-y-2">
           {features.map((feature, idx) => (
-            <li key={idx} className="flex items-start">
-              <span className="text-green-500 mr-2">✓</span>
-              <span className="text-gray-600">{feature}</span>
-            </li>
+            <div key={idx} className="flex justify-between">
+              <span className="text-sm font-medium text-gray-500 flex items-center">
+                <span className="text-green-500 mr-2">✓</span>
+                {feature}
+              </span>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );
@@ -324,7 +334,7 @@ const MediaKit = () => {
                 Collaboration Packages
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="flex flex-row gap-6 mb-8 overflow-x-auto">
                 <PackageCard
                   title="Standard"
                   price="6,500 SEK"
