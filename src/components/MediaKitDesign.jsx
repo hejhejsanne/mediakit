@@ -38,11 +38,12 @@ const MediaKit = () => {
 
   // Stat card component for audience insights
   const StatCard = ({ label, value }) => (
-    <div className="bg-gray-50 rounded-lg p-5 text-center shadow-sm hover:shadow-md transition flex-1 min-w-[150px]">
-      <p className="text-4xl font-bold text-gray-800">{value}</p>
-      <p className="text-sm text-gray-500 uppercase mt-1">{label}</p>
+    <div className="bg-gray-50 rounded-lg p-5 text-center shadow-sm hover:shadow-md transition flex-1 min-w-[120px]">
+      <p className="text-2xl md:text-4xl font-bold text-gray-800">{value}</p>
+      <p className="text-xs md:text-sm text-gray-500 uppercase mt-1">{label}</p>
     </div>
   );
+
   // Performance indicator component
   const PerformanceIndicator = ({ label, value, percentage }) => (
     <div>
@@ -65,6 +66,7 @@ const MediaKit = () => {
       </div>
     </div>
   );
+
   // Demographic bar component
   const DemographicBar = ({ label, percentage, color = "bg-purple-500" }) => (
     <div className="mb-3">
@@ -83,17 +85,17 @@ const MediaKit = () => {
 
   // Package card component
   const PackageCard = ({ title, price, features, popular = false }) => (
-    <div className="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex-1 min-w-[200px] max-w-[400px]">
+    <div className="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex-1 min-w-[250px] md:min-w-[200px] relative">
       <div className="h-28 bg-pink-100 flex items-flex-start justify-center">
         <span className="text-xl font-bold mt-10 text-pink-500">{title}</span>
       </div>
-      {popular && (
+      {/* {popular && (
         <div className="absolute top-0 right-0">
           <div className="bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
             POPULAR
           </div>
         </div>
-      )}
+      )} */}
       <div className="p-4">
         <div className="flex justify-between mb-1">
           <span className="text-sm font-medium text-gray-500">Price</span>
@@ -116,13 +118,12 @@ const MediaKit = () => {
   );
 
   // Content highlight card
-
   const ContentCard = ({ href, title, image, views, engagement }) => (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex-shrink-0 w-[300px] block"
+      className="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex-shrink-0 w-full sm:w-[250px] md:w-[300px] block"
     >
       <div className="h-48 overflow-hidden">
         <img
@@ -151,8 +152,8 @@ const MediaKit = () => {
       case "year":
         return (
           <>
-            {/* Ändra från grid till flex för horisontell layout */}
-            <div className="flex flex-row gap-4 mb-8 overflow-x-auto pb-4">
+            {/* Responsive stat cards grid - scrollable on small screens, wraps on larger screens */}
+            <div className="flex flex-row flex-wrap md:flex-wrap gap-4 mb-8 overflow-x-auto pb-4">
               <StatCard label="Total Followers" value="37.2K" />
               <StatCard label="Total Likes" value="1.6M" />
               <StatCard label="Total Views" value="15M" />
@@ -201,8 +202,8 @@ const MediaKit = () => {
       case "sixty":
         return (
           <>
-            {/* Ändra från grid till flex för horisontell layout */}
-            <div className="flex flex-row gap-4 mb-8 overflow-x-auto pb-4">
+            {/* Responsive stat cards grid - scrollable on small screens, wraps on larger screens */}
+            <div className="flex flex-row flex-wrap md:flex-wrap gap-4 mb-8 overflow-x-auto pb-4">
               <StatCard label="Followers" value="37.2K" />
               <StatCard label="Likes (Period)" value="51K" />
               <StatCard label="Video Views" value="1.7M" />
@@ -211,13 +212,36 @@ const MediaKit = () => {
               <StatCard label="Comments" value="1.7K" />
             </div>
 
-            {/* Resten av innehållet förblir detsamma */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-              {/* ... */}
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Content Performance
+                </h3>
+                <PerformanceIndicator label="Engagement" value="78%" />
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Age Demographics
+                </h3>
+                <DemographicBar label="18-24" percentage={45} />
+                <DemographicBar label="25-34" percentage={35} />
+                <DemographicBar label="35-44" percentage={15} />
+              </div>
             </div>
 
             <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-              {/* ... */}
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Gender Demographics
+              </h3>
+              <div className="flex items-center">
+                <div className="w-3/4 bg-gray-200 rounded-full h-4 mr-4">
+                  <div className="bg-pink-400 h-4 rounded-l-full w-3/4"></div>
+                </div>
+                <div className="text-sm">
+                  <span className="font-semibold">75% F</span> / 25% M
+                </div>
+              </div>
             </div>
           </>
         );
@@ -225,8 +249,8 @@ const MediaKit = () => {
       case "month":
         return (
           <>
-            {/* Ändra från grid till flex för horisontell layout */}
-            <div className="flex flex-row gap-4 mb-8 overflow-x-auto pb-4">
+            {/* Responsive stat cards grid - scrollable on small screens, wraps on larger screens */}
+            <div className="flex flex-row flex-wrap md:flex-wrap gap-4 mb-8 overflow-x-auto pb-4">
               <StatCard label="Followers" value="37.2K" />
               <StatCard label="Likes (Period)" value="23K" />
               <StatCard label="Video Views" value="800K" />
@@ -235,13 +259,36 @@ const MediaKit = () => {
               <StatCard label="Comments" value="778" />
             </div>
 
-            {/* Resten av innehållet förblir detsamma */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-              {/* ... */}
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Content Performance
+                </h3>
+                <PerformanceIndicator label="Engagement" value="75%" />
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Age Demographics
+                </h3>
+                <DemographicBar label="18-24" percentage={45} />
+                <DemographicBar label="25-34" percentage={35} />
+                <DemographicBar label="35-44" percentage={15} />
+              </div>
             </div>
 
             <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-              {/* ... */}
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Gender Demographics
+              </h3>
+              <div className="flex items-center">
+                <div className="w-3/4 bg-gray-200 rounded-full h-4 mr-4">
+                  <div className="bg-pink-400 h-4 rounded-l-full w-3/4"></div>
+                </div>
+                <div className="text-sm">
+                  <span className="font-semibold">75% F</span> / 25% M
+                </div>
+              </div>
             </div>
           </>
         );
@@ -252,44 +299,49 @@ const MediaKit = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 p-6 flex justify-center items-start">
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 p-2 sm:p-4 md:p-6 flex justify-center items-start">
       <div className="max-w-5xl w-full bg-white rounded-xl shadow-lg overflow-hidden">
-        {/* Header Section */}
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-8 text-center text-white flex justify-center items-center">
-          <div className="flex items-center">
+        {/* Header Section - Made responsive */}
+        <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 sm:p-6 md:p-8 text-center text-white">
+          <div className="flex flex-col md:flex-row items-center justify-center">
             <img
               src={profileImage}
               alt="Sanne Delin"
-              className="w-48 h-48 rounded-full object-cover mr-6"
+              className="w-32 h-32 md:w-48 md:h-48 rounded-full object-cover mb-4 md:mb-0 md:mr-6"
             />
             <div>
-              <h1 className="text-3xl font-bold mb-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">
                 Media Kit - Sanne Delin
               </h1>
-              <p className="text-xl mb-3">@mmmsanne</p>
-              <p className="text-lg mb-2">Food & ASMR Content Creator</p>
-              <p className="text-base italic mb-4">Sweden 🇸🇪</p>
+              <p className="text-lg md:text-xl mb-2 md:mb-3">@mmmsanne</p>
+              <p className="text-base md:text-lg mb-1 md:mb-2">
+                Food & ASMR Content Creator
+              </p>
+              <p className="text-sm md:text-base italic mb-3 md:mb-4">
+                Sweden 🇸🇪
+              </p>
 
-              <div className="flex flex-wrap justify-center gap-3 mt-4">
-                <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+              <div className="flex flex-wrap justify-center gap-2 md:gap-3 mt-2 md:mt-4">
+                <span className="px-3 py-1 bg-white/30 rounded-full text-xs md:text-sm font-medium">
                   Food
                 </span>
-                <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-white/30 rounded-full text-xs md:text-sm font-medium">
                   ASMR
                 </span>
-                <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-white/30 rounded-full text-xs md:text-sm font-medium">
                   Lifestyle
                 </span>
-                <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-white/30 rounded-full text-xs md:text-sm font-medium">
                   Programming
                 </span>
               </div>
             </div>
           </div>
         </div>
-        {/* Navigation */}
-        <div className="bg-gray-100 px-6 py-3">
-          <nav className="flex justify-center gap-4">
+
+        {/* Navigation - Made responsive with scrolling */}
+        <div className="bg-gray-100 px-2 sm:px-4 md:px-6 py-2 md:py-3 overflow-x-auto">
+          <nav className="flex justify-start md:justify-center gap-2 md:gap-4 min-w-max">
             <NavButton
               label="Audience Insights"
               pageName="insights"
@@ -309,15 +361,15 @@ const MediaKit = () => {
         </div>
 
         {/* Content Section */}
-        <div className="p-6">
+        <div className="p-4 md:p-6">
           {/* Audience Insights Page */}
           {activePage === "insights" && (
             <div>
-              <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-0">
                   Audience Insights
                 </h2>
-                <div className="flex space-x-3">
+                <div className="flex space-x-2 md:space-x-3 overflow-x-auto">
                   <TimeframeButton
                     label="368 dagar"
                     period="year"
@@ -337,7 +389,7 @@ const MediaKit = () => {
               </div>
 
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">
                   {activeTimeframe === "year" &&
                     "Audience & Performance (last 368 days)"}
                   {activeTimeframe === "sixty" &&
@@ -353,11 +405,12 @@ const MediaKit = () => {
           {/* Collaboration Rates Page */}
           {activePage === "rates" && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
                 Collaboration Packages
               </h2>
 
-              <div className="flex flex-row gap-6 mb-8 overflow-x-auto">
+              {/* Grid for larger screens, scroll for mobile */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
                 <PackageCard
                   title="Standard"
                   price="6,500 SEK"
@@ -393,17 +446,17 @@ const MediaKit = () => {
                 />
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-6 mb-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">
+              <div className="bg-gray-50 rounded-lg p-4 md:p-6 mb-6">
+                <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-3">
                   Additional Services
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-sm md:text-base text-gray-600 mb-4">
                   For additional services such as Extended Usage Rights,
                   Whitelisting, Script Revisions, or Rush Fee, please get in
                   touch so we can establish a mutually agreeable price and
                   arrangement. Let's talk about it!
                 </p>
-                <p className="italic text-gray-600">
+                <p className="text-sm md:text-base italic text-gray-600">
                   Contact me at: mmmsanne@gmail.com
                 </p>
               </div>
@@ -411,15 +464,14 @@ const MediaKit = () => {
           )}
 
           {/* Past Successes Page */}
-          {/* Past Successes Page */}
           {activePage === "successes" && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
                 Content Highlights
               </h2>
 
-              {/* Ändra denna div från grid till flex för horisontell layout */}
-              <div className="flex flex-row gap-6 mb-8 overflow-x-auto">
+              {/* Grid for larger screens, scroll for mobile */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
                 <ContentCard
                   href="https://www.tiktok.com/@mmmsanne/video/7351855378608557345?lang=sv-SE"
                   image={sushiImage}
@@ -447,7 +499,7 @@ const MediaKit = () => {
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-50 p-4 text-center text-gray-600 text-sm">
+        <div className="bg-gray-50 p-3 md:p-4 text-center text-gray-600 text-xs md:text-sm">
           <p>
             This media kit was created to showcase my audience insights and
             collaboration options. Feel free to reach out to discuss potential
