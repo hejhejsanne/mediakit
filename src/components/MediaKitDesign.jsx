@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import newSushiImage from "../assets/newsushi.png";
 import sushiImage from "../assets/sushi.png";
 import dubaiImage from "../assets/dubai.png";
+import profileImage from "../assets/profile.png";
 
 const MediaKit = () => {
   const [activePage, setActivePage] = useState("insights");
@@ -254,28 +255,38 @@ const MediaKit = () => {
     <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 p-6 flex justify-center items-start">
       <div className="max-w-5xl w-full bg-white rounded-xl shadow-lg overflow-hidden">
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-8 text-center text-white">
-          <h1 className="text-3xl font-bold mb-2">Media Kit - Sanne Delin</h1>
-          <p className="text-xl mb-3">@mmmsanne</p>
-          <p className="text-lg mb-2">Food & ASMR Content Creator</p>
-          <p className="text-base italic mb-4">Sweden 🇸🇪</p>
+        <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-8 text-center text-white flex justify-center items-center">
+          <div className="flex items-center">
+            <img
+              src={profileImage}
+              alt="Sanne Delin"
+              className="w-48 h-48 rounded-full object-cover mr-6"
+            />
+            <div>
+              <h1 className="text-3xl font-bold mb-2">
+                Media Kit - Sanne Delin
+              </h1>
+              <p className="text-xl mb-3">@mmmsanne</p>
+              <p className="text-lg mb-2">Food & ASMR Content Creator</p>
+              <p className="text-base italic mb-4">Sweden 🇸🇪</p>
 
-          <div className="flex flex-wrap justify-center gap-3 mt-4">
-            <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
-              Food
-            </span>
-            <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
-              ASMR
-            </span>
-            <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
-              Lifestyle
-            </span>
-            <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
-              Programming
-            </span>
+              <div className="flex flex-wrap justify-center gap-3 mt-4">
+                <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+                  Food
+                </span>
+                <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+                  ASMR
+                </span>
+                <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+                  Lifestyle
+                </span>
+                <span className="px-4 py-1 bg-white/30 rounded-full text-sm font-medium">
+                  Programming
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-
         {/* Navigation */}
         <div className="bg-gray-100 px-6 py-3">
           <nav className="flex justify-center gap-4">
@@ -390,7 +401,7 @@ const MediaKit = () => {
                   For additional services such as Extended Usage Rights,
                   Whitelisting, Script Revisions, or Rush Fee, please get in
                   touch so we can establish a mutually agreeable price and
-                  arrangement.
+                  arrangement. Let's talk about it!
                 </p>
                 <p className="italic text-gray-600">
                   Contact me at: mmmsanne@gmail.com
