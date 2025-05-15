@@ -199,7 +199,7 @@ const MediaKit = () => {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", // Ändra auto-fill till auto-fit
+                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
                   gap: "1rem",
                   marginBottom: "2rem",
                 }}
