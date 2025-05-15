@@ -5,14 +5,21 @@ const MediaKit = () => {
 
   // Inline styles as a fallback
   const styles = {
+    // Ändra dessa egenskaper i ditt styles-objekt
     container: {
       minHeight: "100vh",
       background: "linear-gradient(to bottom right, #fdf2f8, #ede9fe)",
       padding: "1.5rem",
       fontFamily: "sans-serif",
+      boxSizing: "border-box", // Lägg till detta
+      display: "flex", // Behåll detta
+      justifyContent: "center", // Behåll detta
+      alignItems: "flex-start", // Ändra till flex-start istället för center
     },
+
     content: {
       maxWidth: "64rem",
+      width: "100%", // Lägg till detta
       margin: "0 auto",
       background: "white",
       borderRadius: "0.75rem",
@@ -192,7 +199,7 @@ const MediaKit = () => {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", // Ändra auto-fill till auto-fit
                   gap: "1rem",
                   marginBottom: "2rem",
                 }}
@@ -324,20 +331,6 @@ const MediaKit = () => {
                     position: "relative",
                   }}
                 >
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      right: 0,
-                      background: "#8b5cf6",
-                      color: "white",
-                      padding: "0.25rem 0.5rem",
-                      fontSize: "0.75rem",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    POPULAR
-                  </div>
                   <div style={{ padding: "1.5rem" }}>
                     <h3
                       style={{
